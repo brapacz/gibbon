@@ -3,6 +3,7 @@ module Gibbon
     attr_accessor :api_key, :api_endpoint, :timeout, :proxy, :faraday_adapter, :debug, :logger
 
     DEFAULT_TIMEOUT = 30
+    HTTP_METHODS_MAP = { retrieve: :get, upsert: :put, update: :patch, create: :post }.freeze
 
     def initialize(api_key: nil, api_endpoint: nil, timeout: nil, proxy: nil, faraday_adapter: nil, debug: false, logger: nil)
       @path_parts = []
@@ -62,6 +63,13 @@ module Gibbon
 
     def delete(params: nil, headers: nil)
       APIRequest.new(builder: self).delete(params: params, headers: headers)
+    ensure
+      reset
+    end
+
+    def to_batch(method, **attributes)
+      method = HTTP_METHODS_MAP[method] if HTTP_METHODS_MAP.has_key?(method)
+      APIRequest.new(builder: self).to_batch(method, **attributes)
     ensure
       reset
     end

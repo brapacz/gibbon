@@ -69,6 +69,14 @@ module Gibbon
       end
     end
 
+    def to_batch(method, body: nil)
+      {
+        path: @request_builder.path,
+        method: method.to_s.upcase,
+        body: body.to_json,
+      }
+    end
+
     protected
 
     # Convenience accessors
